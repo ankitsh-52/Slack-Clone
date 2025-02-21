@@ -8,6 +8,7 @@ import {FcGoogle} from "react-icons/fc";
 import {FaGithub} from "react-icons/fa";
 
 import { signInFlow } from "../types";
+import { useState } from "react";
 
 
 interface SignUpCardProps {
@@ -15,6 +16,11 @@ interface SignUpCardProps {
 }
 
 export const SignUpCard = ({setState} : SignUpCardProps) => {
+
+    const [email, setEmail] = useState("");
+    const [[password], setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+
     return(
         <Card className="w-full h-full p-8">
             <CardHeader className="px-0 pt-0">
@@ -29,27 +35,27 @@ export const SignUpCard = ({setState} : SignUpCardProps) => {
                 <form className="space-y-2.5">
                     <Input 
                         disabled={false}
-                        value=""
+                        value={email}
                         placeholder="Email"
                         type="email"
                         required
-                        onChange={() => {}}
+                        onChange={(e) => {setEmail(e.target.value)}}
                     />
                     <Input 
                         disabled={false}
-                        value=""
+                        value={password}
                         placeholder="Password"
                         type="password"
                         required
-                        onChange={() => {}}
+                        onChange={(e) => {setPassword(e.target.value)}}
                     />
                     <Input 
                         disabled={false}
-                        value=""
+                        value={confirmPassword}
                         placeholder="Confirm password"
                         type="password"
                         required
-                        onChange={() => {}}
+                        onChange={(e) => {setConfirmPassword(e.target.value)}}
                     />
                     <Button
                         type="submit"
