@@ -69,7 +69,7 @@ export const SignInCard = ({setState} : SignInCardProps) => {
                     <Button
                         size={"lg"}
                         disabled={false}
-                        onClick={() => {}}
+                        onClick={() => {handleProviderSignIn("google")}}
                         variant={"outline"}
                         className="w-full relative"
                     >
