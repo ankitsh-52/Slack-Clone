@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <ConvexAuthNextjsServerProvider>
-      <html lang="en" suppressHydrationWarning>
+      <html lang='en' suppressHydrationWarning>
         <body className={inter.className}>
           <ConvexClientProvider>
             {children}

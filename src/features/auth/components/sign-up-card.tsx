@@ -9,6 +9,8 @@ import {FaGithub} from "react-icons/fa";
 
 import { signInFlow } from "../types";
 import { useState } from "react";
+import { TriangleAlert } from "lucide-react";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 
 interface SignUpCardProps {
@@ -17,9 +19,38 @@ interface SignUpCardProps {
 
 export const SignUpCard = ({setState} : SignUpCardProps) => {
 
+    const { signIn } = useAuthActions();
+
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [[password], setPassword] = useState("");
+    const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [pending, setPending] = useState(false);
+    const [error, setError] = useState("");
+
+    const handlePasswordSignUp = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if(password !== confirmPassword){
+            setError("Password do not match ");
+            return;
+        }
+        setPending(true);
+        signIn("password", {name, email, password, flow: "signUp"})
+            .catch(() => {
+                setError("Something went wrong");
+            })
+            .finally(() => {
+                setPending(false);
+            });
+    }
+
+    const handleProviderSignUp = (value: "github" | "google") => {
+        setPending(true);
+        signIn(value)
+        .finally(() => {
+            setPending(false);
+        });
+    };
 
     return(
         <Card className="w-full h-full p-8">
@@ -31,10 +62,23 @@ export const SignUpCard = ({setState} : SignUpCardProps) => {
                     Use your email or another service to continue
                 </CardDescription>
             </CardHeader>
+            {!!error && (
+                <div className="bg-destructive/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-destructive mb-6">
+                    <TriangleAlert className="size-4"/>
+                    <p>{error}</p>
+                </div>
+            )}
             <CardContent className="space-y-5 px-0 pb-0">
-                <form className="space-y-2.5">
+                <form className="space-y-2.5" onSubmit={handlePasswordSignUp}>
                     <Input 
-                        disabled={false}
+                        disabled={pending}
+                        value={name}
+                        placeholder="Full name"
+                        required
+                        onChange={(e) => {setName(e.target.value)}}
+                    />
+                    <Input 
+                        disabled={pending}
                         value={email}
                         placeholder="Email"
                         type="email"
@@ -42,7 +86,7 @@ export const SignUpCard = ({setState} : SignUpCardProps) => {
                         onChange={(e) => {setEmail(e.target.value)}}
                     />
                     <Input 
-                        disabled={false}
+                        disabled={pending}
                         value={password}
                         placeholder="Password"
                         type="password"
@@ -50,7 +94,7 @@ export const SignUpCard = ({setState} : SignUpCardProps) => {
                         onChange={(e) => {setPassword(e.target.value)}}
                     />
                     <Input 
-                        disabled={false}
+                        disabled={pending}
                         value={confirmPassword}
                         placeholder="Confirm password"
                         type="password"
@@ -61,7 +105,7 @@ export const SignUpCard = ({setState} : SignUpCardProps) => {
                         type="submit"
                         className="w-full"
                         size={"lg"}
-                        disabled={false}
+                        disabled={pending}
                     >
                         Continue
                     </Button>
@@ -70,8 +114,8 @@ export const SignUpCard = ({setState} : SignUpCardProps) => {
                 <div className="flex flex-col gap-y-2.5">
                     <Button
                         size={"lg"}
-                        disabled={false}
-                        onClick={() => {}}
+                        disabled={pending}
+                        onClick={() => {handleProviderSignUp("google")}}
                         variant={"outline"}
                         className="w-full relative"
                     >
@@ -80,8 +124,8 @@ export const SignUpCard = ({setState} : SignUpCardProps) => {
                     </Button>
                     <Button
                         size={"lg"}
-                        disabled={false}
-                        onClick={() => {}}
+                        disabled={pending}
+                        onClick={() => {handleProviderSignUp("github")}}
                         variant={"outline"}
                         className="w-full relative"
                     >
